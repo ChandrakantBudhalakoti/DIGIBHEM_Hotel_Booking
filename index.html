@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Booking Registration Form</title>
+</head>
+
+<body>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Blinker:wght@200&family=Varela+Round&display=swap");
+
+        * {
+            font-family: "Blinker", "Varela Round", sans-serif;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url("https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aG90ZWx8ZW58MHx8MHx8fDA%3D&w=1000&q=80");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid black;
+            background-color: #b7fdf7;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border: 1px solid black;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg,
+                    rgb(127, 179, 81),
+                    rgb(56, 201, 150),
+                    rgb(226, 130, 245));
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input,
+        select {
+            width: 97%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #050505;
+        }
+    </style>
+    <div class="container">
+        <h1>Hotel Booking Registration Form</h1>
+        <form id="booking-form" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+            <!-- Customer Info section -->
+            <div class="section">
+                <h2>Customer Info</h2>
+                <label for="customerName">Customer Name:</label>
+                <input type="text" id="customerName" name="customerName" required>
+                <label for="checkInDate">Check-in Date:</label>
+                <input type="date" id="checkInDate" name="checkInDate" required>
+                <label for="totalDays">Total No of Days:</label>
+                <input type="number" id="totalDays" name="totalDays" required min="1">
+                <label for="totalPersons">Total No of Persons:</label>
+                <input type="number" id="totalPersons" name="totalPersons" required min="1">
+            </div>
+
+            <!-- Room Information section -->
+            <div class="section">
+                <h2>Room Information</h2>
+                <label for="roomType">Room Type:</label>
+                <select id="roomType" name="roomType">
+                    <option value="Delux">Delux Room</option>
+                    <option value="Suite">Suite Room</option>
+                </select>
+                <label for="amenities">Amenities:</label>
+                <select id="amenities" name="amenities[]" multiple>
+                    <option value="AC">AC</option>
+                    <option value="Locker">Locker</option>
+                </select>
+            </div>
+
+            <!-- Advance Payment section -->
+            <div class="section">
+                <h2>Advance Payment</h2>
+                <label for="advanceAmount">Advance Amount:</label>
+                <input type="number" id="advanceAmount" name="advanceAmount" required min="0">
+            </div>
+
+            <!-- Total Cost Calculation section -->
+            <div class="section">
+                <h2>Total Cost Calculation</h2>
+                <p>Total Room Cost: <span id="totalRoomCost">0</span></p>
+                <p>Total Amenities Cost: <span id="totalAmenitiesCost">0</span></p>
+                <p>Total Cost: <span id="totalCost">0</span></p>
+            </div>
+            <button type="submit">Book Now</button>
+        </form>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("booking-form");
+            const roomTypeSelect = document.getElementById("roomType");
+            const amenitiesSelect = document.getElementById("amenities");
+            const advanceAmountInput = document.getElementById("advanceAmount");
+            const totalRoomCostSpan = document.getElementById("totalRoomCost");
+            const totalAmenitiesCostSpan = document.getElementById("totalAmenitiesCost");
+            const totalCostSpan = document.getElementById("totalCost");
+
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                const roomRate = roomTypeSelect.value === "Delux" ? 2500 : 4000;
+                const amenitiesCost = Array.from(amenitiesSelect.selectedOptions).reduce(
+                    (total, option) => total + (option.value === "AC" ? 1000 : 300),
+                    0
+                );
+                const totalDays = parseInt(document.getElementById("totalDays").value, 10);
+                const totalPersons = parseInt(document.getElementById("totalPersons").value, 10);
+                const extraPersonCost = totalPersons > 2 ? (totalPersons - 2) * 1000 : 0;
+                const advanceAmount = parseFloat(advanceAmountInput.value);
+
+                const totalRoomCost = roomRate * totalDays;
+                const totalAmenitiesCost = amenitiesCost * totalDays;
+                const totalCost = totalRoomCost + totalAmenitiesCost + extraPersonCost;
+
+                totalRoomCostSpan.textContent = totalRoomCost;
+                totalAmenitiesCostSpan.textContent = totalAmenitiesCost;
+                totalCostSpan.textContent = totalCost - advanceAmount;
+            });
+        });
+
+    </script>
+</body>
+
+</html>
